@@ -21,3 +21,9 @@ eF Zoom Mini Project (BACKEND)
 ```
 > ./run.sh
 ```
+
+PS: If not using the script, be sure to activate the venv before running pip/flask.
+
+```
+> source .venv/bin/activate
+```
