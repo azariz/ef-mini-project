@@ -18,19 +18,22 @@ app = Flask(__name__)
 app.DEBUG = True
 
 
-# * Routes Views
+# * Routes: Views
 # --------------------------------------------------------------------------- *
 
-# Index view
+# Index page
 # --
 @app.route('/')
 def view_index():
     return '<p>Hello, World!</p>'
 
 
-# Index view
-# --
+# * Routes: API
 # @TODO: with more time, use Flask-RESTful instead
+# --------------------------------------------------------------------------- *
+
+# Events ressource
+# --
 @app.route('/events/', methods=['GET', 'POST'])
 def api_events():
 
