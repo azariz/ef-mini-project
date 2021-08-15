@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------- *
 from flask import Flask, request, jsonify
 from time import time
+from flask_cors import CORS
 import jwt
 import requests
 import json
@@ -21,7 +22,7 @@ ZOOM_KEY_EXPIRY = 5000  # seconds
 # * Config
 # --------------------------------------------------------------------------- *
 app = Flask(__name__)
-app.DEBUG = True
+CORS(app)
 
 
 # * Utils
@@ -41,11 +42,11 @@ def zoom_get_token():
 # Zoom New Meeting
 # transform front data event to a meeting event
 def zoom_new_meeting(user_event):
-    event_data = {"topic": "The title of your zoom meeting",
+    event_data = {"topic": user_event['event_title'],
                   "type": 2,  # scheduled meeting
-                  "start_time": "2021-09-15T10:10:00",
-                  "duration": "30",  # minutes
-                  "timezone": "Europe/Paris"
+                  "start_time": user_event['event_start'],  # GMT timestring
+                  "duration": user_event['event_duration'],  # minutes
+                  "timezone": "Europe/Paris"  # @TODO: Get from client browser
                   }
     return event_data
 
@@ -73,7 +74,7 @@ def zoom_post_event(event_data):
 # --
 @app.route('/')
 def view_index():
-    return '<p>Hello, World!</p>'
+    return '<p>Hello there. Please use <pre>/api/events/</pre> endpoint.</p>'
 
 
 # * Routes: API
@@ -82,18 +83,20 @@ def view_index():
 
 # Events ressource
 # --
-@app.route('/events/', methods=['GET', 'POST'])
+@app.route('/api/events/', methods=['GET', 'POST'])
 def api_events():
 
     if request.method == 'POST':
         # behaviour for POST request (adding an event)
         # parse data front front
         user_event = request.json
-        app.logger.info(f"Received JSON is : {user_event}")
+        app.logger.debug(f"Received JSON from front:\n {user_event}")
 
         # create a zoom meeting then post it to API
         zoom_meeting_data = zoom_new_meeting(user_event)
+        app.logger.debug(f"Creating meeting on Zoom:\n {zoom_meeting_data}")
         res = zoom_post_event(zoom_meeting_data)
+        app.logger.debug(f"Meeting created. Details:\n {res}")
 
         # if all good, return OK
         return jsonify({'status': 'ok', 'zoom_res': res}), 200
