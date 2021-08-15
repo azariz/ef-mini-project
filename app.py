@@ -44,9 +44,9 @@ def zoom_get_token():
 def zoom_new_meeting(user_event):
     event_data = {"topic": user_event['event_title'],
                   "type": 2,  # scheduled meeting
-                  "start_time": user_event['event_start'],  # GMT timestring
+                  "start_time": user_event['event_start'],  # UTC timestring
                   "duration": user_event['event_duration'],  # minutes
-                  "timezone": "Europe/Paris"  # @TODO: Get from client browser
+                  "timezone": "UTC"
                   }
     return event_data
 
