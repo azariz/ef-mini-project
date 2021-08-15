@@ -5,6 +5,7 @@
 
 # * Imports
 # --------------------------------------------------------------------------- *
+from threading import local
 from flask import Flask, request, jsonify
 
 # * Params
@@ -42,7 +43,3 @@ def api_events():
     # behaviour for GET request (requesting all events)
     elif request.method == 'GET':
         return jsonify({'status':'not implemented.'}), 501
-
-
-if __name__ == '__main__':
-    app.run(debug=True)
